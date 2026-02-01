@@ -28,6 +28,7 @@ export default defineConfig({
   },
   root: path.resolve(import.meta.dirname, "client"),
   build: {
+    // UPDATED: Move the output directory up so it's outside the 'client' folder
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
   },
