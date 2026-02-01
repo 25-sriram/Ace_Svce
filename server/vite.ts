@@ -68,20 +68,17 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  // Use process.cwd() to anchor the path to the root of your deployment
+  // Use process.cwd() to ensure it finds the 'dist/public' folder in the root
   const distPath = path.resolve(process.cwd(), "dist", "public");
 
   if (!fs.existsSync(distPath)) {
-    // Log the path for debugging in Vercel logs if it fails
-    console.error(`Checking for build at: ${distPath}`);
-    throw new Error(
-      `Could not find the build directory: ${distPath}. Make sure to build the client first.`,
-    );
+    console.error(`Missing build at: ${distPath}`);
+    throw new Error(`Could not find build directory. Run 'npm run build' first.`);
   }
 
   app.use(express.static(distPath));
 
-  // The Catch-all: This handles browser refreshes on routes like /events
+  // Handle SPA refreshes (this is the key to fixing the /events 404)
   app.use("*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });
